@@ -1,3 +1,5 @@
+import 'package:bitcoin_calculator/screens/btcToUsd.dart';
+import 'package:bitcoin_calculator/screens/usdToBtc.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -40,27 +42,26 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+            ElevatedButton(onPressed:() {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context)=>UsdToBtc())
+                );
+                },
+              child: Text("USD to BTC", key: Key("usdtobtc")),
+              key: Key('usdtobtc_button') //Key for usdtobtc_button+
             ),
-            Text(
-              '$_counter',
-              // Provide a Key to this specific Text widget. This allows
-              // identifying the widget from inside the test suite,
-              // and reading the text.
-              key: Key('counter'),
-              style: Theme.of(context).textTheme.headline4,
+            ElevatedButton(onPressed:() {
+             Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context)=>btcToUsd())
+              );
+            },
+            child: Text("BTC to USD", key: Key("btctousd")),
+            key: Key('btctousd_button') //Key for btctousd_button
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        // Provide a Key to this button. This allows finding this
-        // specific button inside the test suite, and tapping it.
-        key: Key('increment'),
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
       ),
     );
   }
