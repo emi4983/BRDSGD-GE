@@ -2,7 +2,6 @@ import 'package:bitcoin_calculator/utils/Conversions.dart';
 import 'package:flutter/material.dart';
 
 class UsdToBtc extends StatefulWidget {
-
   @override
   State<UsdToBtc> createState() => _UsdToBtcState();
 }
@@ -16,22 +15,27 @@ class _UsdToBtcState extends State<UsdToBtc> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.blue,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
           key: Key('backButton'), //Key for back button
         ),
+        backgroundColor: Colors.white,
+        elevation: 0.0,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(_result.toString(),
+            Text(
+              _result.toString(),
               key: Key('usdtobtc_result'), //Key for usdtobtc
-              style: TextStyle(color: Colors.green,
-              fontSize: 25.0), 
-              ), //Result key for usdtobtc
+              style: TextStyle(color: Colors.green, fontSize: 25.0),
+            ), //Result key for usdtobtc
             TextField(
               key: Key('usdtobtc_textfield'), //TextField key for usdtobtc
               decoration: InputDecoration(
@@ -42,25 +46,27 @@ class _UsdToBtcState extends State<UsdToBtc> {
               keyboardType: TextInputType.number,
             ),
             Text(_errorMessage,
-              style: TextStyle(color: Colors.red),
-              key: Key('error_message')
-            ),
+                style: TextStyle(color: Colors.red), key: Key('error_message')),
             ElevatedButton(
               onPressed: () {
-              try{
-                String usdValue = _controller.text;
-                String btcValue = Conversion.usdtobtc(double.parse(usdValue)).toString();
-                setState(() {
-                  _result = double.parse(btcValue);
-                  _errorMessage = '';
-                });
-              } catch(e){
+                try {
+                  String usdValue = _controller.text;
+                  String btcValue =
+                      Conversion.usdtobtc(double.parse(usdValue)).toString();
                   setState(() {
-                  _errorMessage = 'USD value cannot be negative';
+                    _result = double.parse(btcValue);
+                    _errorMessage = '';
+                  });
+                } catch (e) {
+                  setState(() {
+                    _errorMessage = 'USD value cannot be negative';
                   });
                 }
               },
-              child: Text('Convert', key: Key('convertButtonText'),),
+              child: Text(
+                'Convert',
+                key: Key('convertButtonText'),
+              ),
               key: Key('Result'), //Button key for usdtobtc
             ),
           ],

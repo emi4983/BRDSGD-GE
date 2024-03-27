@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Counter App',
       home: MyHomePage(title: 'Counter App Home Page'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -24,42 +25,29 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(onPressed:() {
-              Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context)=>UsdToBtc())
-                );
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => UsdToBtc()));
                 },
-              child: Text("USD to BTC", key: Key("usdtobtc")),
-              key: Key('usdtobtc_button') //Key for usdtobtc_button+
-            ),
-            ElevatedButton(onPressed:() {
-             Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context)=>btcToUsd())
-              );
-            },
-            child: Text("BTC to USD", key: Key("btctousd")),
-            key: Key('btctousd_button') //Key for btctousd_button
-            ),
+                child: Text("USD to BTC", key: Key("usdtobtc")),
+                key: Key('usdtobtc_button') //Key for usdtobtc_button+
+                ),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => btcToUsd()));
+                },
+                child: Text("BTC to USD", key: Key("btctousd")),
+                key: Key('btctousd_button') //Key for btctousd_button
+                ),
           ],
         ),
       ),
