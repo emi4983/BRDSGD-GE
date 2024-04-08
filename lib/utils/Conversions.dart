@@ -1,15 +1,15 @@
 class Conversion {
-  static double btcToUsd(double btcValue) {
+  static double btcToUsd(double btcValue, double price) {
     if (btcValue < 0) {
       throw new ArgumentError("BTC value cannot be negative");
     }
-    return btcValue * 69855;
+    return btcValue * price;
   }
 
-  static double usdtobtc(double usdValue) {
+  static double usdtobtc(double usdValue, double price) {
     if (usdValue < 0) {
       throw new ArgumentError("USD value cannot be negative");
     }
-    return usdValue / 69855;
+    return usdValue / price;
   }
 }

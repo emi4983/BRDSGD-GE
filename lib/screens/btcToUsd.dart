@@ -1,5 +1,7 @@
 import 'package:bitcoin_calculator/utils/Conversions.dart';
 import 'package:flutter/material.dart';
+import 'package:bitcoin_calculator/utils/bitcoin_api.dart';
+import 'package:http/http.dart' as http;
 
 class btcToUsd extends StatefulWidget {
   @override
@@ -7,10 +9,41 @@ class btcToUsd extends StatefulWidget {
 }
 
 class _btcToUsdState extends State<btcToUsd> {
+  Future<double> usdPrice;
   TextEditingController _controller = TextEditingController();
   String _errorMessage = '';
   double _result = 0.0;
   @override
+  void initState() {
+    super.initState();
+    usdPrice = BitcoinCalculatorAPI.fetchPrice(http.Client());
+  }
+
+  FutureBuilder<double> buildFutureBuilderBtcToUSD() {
+    return FutureBuilder<double>(
+      future: usdPrice,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          double price = snapshot.data;
+          double btcAmount = double.tryParse(_controller.text) ?? 0.0;
+          double usdAmount = Conversion.btcToUsd(btcAmount, price);
+          return Text(
+            "$usdAmount",
+            key: Key('btc_price'),
+            style: TextStyle(color: Colors.green, fontSize: 25.0),
+          );
+        } else if (snapshot.hasError) {
+          return Text(
+            snapshot.error.toString(),
+            key: Key('error_message'),
+            style: TextStyle(color: Colors.red),
+          );
+        }
+        return CircularProgressIndicator();
+      },
+    );
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -28,11 +61,7 @@ class _btcToUsdState extends State<btcToUsd> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              _result.toString(),
-              key: Key('btctousd_result'), //Key for btctousd
-              style: TextStyle(color: Colors.green, fontSize: 25.0),
-            ), //Result key for btctousd
+            buildFutureBuilderBtcToUSD(), //Result key for btctousd
             TextField(
               key: Key('btctousd_textfield'), //TextField key for btctousd
               decoration: InputDecoration(
@@ -49,19 +78,7 @@ class _btcToUsdState extends State<btcToUsd> {
             ),
             ElevatedButton(
               onPressed: () {
-                try {
-                  String btcValue = _controller.text;
-                  String usdValue =
-                      Conversion.btcToUsd(double.parse(btcValue)).toString();
-                  setState(() {
-                    _result = double.parse(usdValue);
-                    _errorMessage = '';
-                  });
-                } catch (e) {
-                  setState(() {
-                    _errorMessage = 'BTC value cannot be negative';
-                  });
-                }
+                setState(() {});
               },
               child: Text(
                 'Convert',
