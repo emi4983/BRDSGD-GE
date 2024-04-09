@@ -1,10 +1,6 @@
-import 'dart:ffi';
-
 import 'package:bitcoin_calculator/screens/btcToUsd.dart';
 import 'package:bitcoin_calculator/screens/usdToBtc.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:bitcoin_calculator/utils/bitcoin_api.dart';
 
 void main() => runApp(MyApp());
 
@@ -31,10 +27,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Future<double> btcPrice;
   @override
-  void initState() {
-    super.initState();
-    btcPrice = BitcoinCalculatorAPI.fetchPrice(http.Client());
-  }
 
 
   Widget build(BuildContext context) {

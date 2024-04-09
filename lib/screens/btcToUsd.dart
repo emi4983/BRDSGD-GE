@@ -2,6 +2,7 @@ import 'package:bitcoin_calculator/utils/Conversions.dart';
 import 'package:flutter/material.dart';
 import 'package:bitcoin_calculator/utils/bitcoin_api.dart';
 import 'package:http/http.dart' as http;
+import 'package:bitcoin_calculator/config/globals.dart';
 
 class btcToUsd extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ class _btcToUsdState extends State<btcToUsd> {
   @override
   void initState() {
     super.initState();
-    usdPrice = BitcoinCalculatorAPI.fetchPrice(http.Client());
+    usdPrice = BitcoinCalculatorAPI.fetchPrice(httpClient);
   }
 
   FutureBuilder<double> buildFutureBuilderBtcToUSD() {
@@ -24,18 +25,26 @@ class _btcToUsdState extends State<btcToUsd> {
       future: usdPrice,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          double price = snapshot.data;
-          double btcAmount = double.tryParse(_controller.text) ?? 0.0;
-          double usdAmount = Conversion.btcToUsd(btcAmount, price);
-          return Text(
-            "$usdAmount",
-            key: Key('btc_price'),
-            style: TextStyle(color: Colors.green, fontSize: 25.0),
-          );
+          try {
+            double price = snapshot.data;
+            double btcAmount = double.tryParse(_controller.text) ?? 0.0;
+            double usdAmount = Conversion.btcToUsd(btcAmount, price);
+            return Text(
+              "$usdAmount",
+              key: Key('btc_price'),
+              style: TextStyle(color: Colors.green, fontSize: 25.0),
+            );
+          } catch (e) {
+            return Text(
+              "BTC value cannot be negative",
+              key: Key('error_message'),
+              style: TextStyle(color: Colors.red, fontSize: 25.0),
+            );
+          }
         } else if (snapshot.hasError) {
           return Text(
             snapshot.error.toString(),
-            key: Key('error_message'),
+            //key: Key('error_message'),
             style: TextStyle(color: Colors.red),
           );
         }
@@ -74,11 +83,18 @@ class _btcToUsdState extends State<btcToUsd> {
             Text(
               _errorMessage,
               style: TextStyle(color: Colors.red),
-              key: Key('error_message'),
+              //key: Key('error_message'),
             ),
             ElevatedButton(
               onPressed: () {
-                setState(() {});
+                setState(() {
+                  double btcAmount = double.tryParse(_controller.text) ?? 0.0;
+                  if (btcAmount > 0) {
+                    _errorMessage = '';
+                  } else {
+                    _errorMessage = 'BTC value cannot be negative';
+                  }
+                });
               },
               child: Text(
                 'Convert',

@@ -2,6 +2,7 @@ import 'package:bitcoin_calculator/utils/Conversions.dart';
 import 'package:flutter/material.dart';
 import 'package:bitcoin_calculator/utils/bitcoin_api.dart';
 import 'package:http/http.dart' as http;
+import 'package:bitcoin_calculator/config/globals.dart';
 
 class UsdToBtc extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ class _UsdToBtcState extends State<UsdToBtc> {
   @override
   void initState() {
     super.initState();
-    btcPrice = BitcoinCalculatorAPI.fetchPrice(http.Client());
+    btcPrice = BitcoinCalculatorAPI.fetchPrice(httpClient);
   }
 
   FutureBuilder<double> buildFutureBuilderUsdToBTC() {
@@ -24,18 +25,26 @@ class _UsdToBtcState extends State<UsdToBtc> {
       future: btcPrice,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          double price = snapshot.data;
-          double usdAmount = double.tryParse(_controller.text) ?? 0.0;
-          double btcAmount = Conversion.usdtobtc(usdAmount, price);
-          return Text(
-            "$btcAmount",
-            key: Key('btc_price'),
-            style: TextStyle(color: Colors.green, fontSize: 25.0),
-          );
+          try {
+            double price = snapshot.data;
+            double usdAmount = double.tryParse(_controller.text) ?? 0.0;
+            double btcAmount = Conversion.usdtobtc(usdAmount, price);
+            return Text(
+              "$btcAmount",
+              key: Key('btc_price'),
+              style: TextStyle(color: Colors.green, fontSize: 25.0),
+            );
+          } catch (e) {
+            return Text(
+              "USD value cannot be negative",
+              key: Key('error_message'),
+              style: TextStyle(color: Colors.red, fontSize: 25.0),
+            ); 
+          }
         } else if (snapshot.hasError) {
           return Text(
             snapshot.error.toString(),
-            key: Key('error_message'),
+            //key: Key('error_message'),
             style: TextStyle(color: Colors.red),
           );
         }
@@ -64,12 +73,7 @@ class _UsdToBtcState extends State<UsdToBtc> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildFutureBuilderUsdToBTC(), //Result key for usdtobtc
-            // Text(
-            //   _result.toString(),
-            //   key: Key('usdtobtc_result'), //Key for usdtobtc
-            //   style: TextStyle(color: Colors.green, fontSize: 25.0),
-            // ), //Result key for usdtobtc
+            buildFutureBuilderUsdToBTC(),
             TextField(
               key: Key('usdtobtc_textfield'), //TextField key for usdtobtc
               decoration: InputDecoration(
@@ -79,11 +83,21 @@ class _UsdToBtcState extends State<UsdToBtc> {
               controller: _controller,
               keyboardType: TextInputType.number,
             ),
-            Text(_errorMessage,
-                style: TextStyle(color: Colors.red), key: Key('error_message')),
+            Text(
+              _errorMessage,
+              style: TextStyle(color: Colors.red),
+              //key: Key('error_message')
+            ),
             ElevatedButton(
               onPressed: () {
-                setState(() {});
+                setState(() {
+                  double usdAmount = double.tryParse(_controller.text) ?? 0.0;
+                  if (usdAmount > 0) {
+                    _errorMessage = '';
+                  } else {
+                    _errorMessage = 'USD value cannot be negative';
+                  }
+                });
               },
               child: Text(
                 'Convert',
